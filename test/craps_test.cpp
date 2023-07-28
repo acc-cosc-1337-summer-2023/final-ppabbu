@@ -1,6 +1,7 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
-#include "catch.hpp"
 #include "die.h"
+#include "roll.h"
+#include "shooter.h"
 
 TEST_CASE("Verify Test Configuration", "verification") {
 	REQUIRE(true == true);
@@ -38,5 +39,19 @@ TEST_CASE("Ensure die rolls return a value from 2 to 12.")
 		REQUIRE(value >= 2);
 		REQUIRE(value <= 12);
 
+	}
+}
+
+TEST_CASE("Shooter class test - Refactored Approach")
+{
+	Die die1, die2;
+	Shooter shooter;
+
+	for(int i=0; i < 10; i++){
+		// Throw the dice
+		Roll* roll = shooter.throw_dice(die1, die2);
+		// get the roll value and check to see if it is in range
+		REQUIRE(roll->roll_value() >= 2);
+		REQUIRE(roll->roll_value() <= 12);
 	}
 }
