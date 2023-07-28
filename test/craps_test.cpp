@@ -21,3 +21,22 @@ TEST_CASE("Roll 10 times and require rolls to be between 1-6") {
 		REQUIRE(rollvalue <= 6);
 	}
 }
+
+TEST_CASE("Ensure die rolls return a value from 2 to 12.")
+{
+	// Create 2 Die
+	Die die1, die2;
+	// create a roll with the 2 dice
+	Roll roll(die1, die2);
+	// Roll the dice 10 times using a loop
+	for(int i = 0; i < 10; i++) {
+		// actually roll the die
+		roll.roll_die();
+		// get the value of the roll
+		int value = roll.roll_value(); 
+		// test that it is greater or equal to 2 and less than or equal to 12
+		REQUIRE(value >= 2);
+		REQUIRE(value <= 12);
+
+	}
+}
