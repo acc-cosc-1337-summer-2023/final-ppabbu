@@ -1,28 +1,24 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
+#include "catch.hpp"
 #include "die.h"
 #include "roll.h"
 #include "shooter.h"
+#include "come_out_phase.h"
+#include "point_phase.h"
 
 TEST_CASE("Verify Test Configuration", "verification") {
 	REQUIRE(true == true);
 }
-
-TEST_CASE("Assert die rolls return 1-6") {
-	// require die rolls to return 1-6;
-}
-
-TEST_CASE("Roll 10 times and require rolls to be between 1-6") {
-
+TEST_CASE("Die rolls return a value from 1 to 6", "[die]")
+{
 	Die die;
-	for(int i = 0; i < 10; i++)
-	{
+	for(int i = 0; i < 10; i++) {
 		die.roll();
-		int rollvalue = die.rolled_value();
-		REQUIRE(rollvalue > 0);
-		REQUIRE(rollvalue <= 6);
+		int value = die.rolled_value();
+		REQUIRE(value >= 1);
+		REQUIRE(value <= 6);
 	}
 }
-
 TEST_CASE("Ensure die rolls return a value from 2 to 12.")
 {
 	// Create 2 Die
@@ -38,15 +34,13 @@ TEST_CASE("Ensure die rolls return a value from 2 to 12.")
 		// test that it is greater or equal to 2 and less than or equal to 12
 		REQUIRE(value >= 2);
 		REQUIRE(value <= 12);
-
+	
 	}
 }
-
 TEST_CASE("Shooter class test - Refactored Approach")
 {
 	Die die1, die2;
 	Shooter shooter;
-
 	for(int i=0; i < 10; i++){
 		// Throw the dice
 		Roll* roll = shooter.throw_dice(die1, die2);
@@ -54,4 +48,57 @@ TEST_CASE("Shooter class test - Refactored Approach")
 		REQUIRE(roll->roll_value() >= 2);
 		REQUIRE(roll->roll_value() <= 12);
 	}
+}
+TEST_CASE("Shooter class test - Alternate Approach")
+{
+	Die die1, die2;
+	Shooter shooter;
+	for(int i=0; i < 10; i++){
+		// Throw the dice
+		Roll* roll = shooter.throw_dice(die1, die2);
+		// Get the roll value
+		int roll_value = roll->roll_value();  
+        // Check if the roll value is within the expected range
+        REQUIRE(roll_value >= 2);
+        REQUIRE(roll_value <= 12);
+	}
+}
+
+TEST_CASE("Phase classes ComeOutPhase OutComes")
+{
+	Die die1, die2;
+	Shooter shooter;
+
+	ComeOutPhase come_out_phase;
+
+	for(int i = 0; i < 10; i++){
+		Roll* roll = shooter.throw_dice(die1, die2);
+		RollOutcome outcome = come_out_phase.get_outcome(roll);
+
+		// Test that roll can result in natural, craps, or point
+		REQUIRE((outcome == RollOutcome::natural || outcome == RollOutcome::craps || outcome == RollOutcome::point));
+	}
+
+
+}
+
+TEST_CASE("Phase classes PointPhase OutComes")
+{
+	Die die1, die2;
+	Shooter shooter;
+
+	// ComeOutPhase come_out_phase;
+
+	// Assume the point is 4
+	PointPhase point_phase(4);
+
+	for(int i = 0; i < 10; i++){
+		Roll* roll = shooter.throw_dice(die1, die2);
+		RollOutcome outcome = point_phase.get_outcome(roll);
+
+		// Test that roll can result in point, sevenout, or nopoint
+		REQUIRE((outcome == RollOutcome::point || outcome == RollOutcome::seven_out || outcome == RollOutcome::nopoint));
+	}
+
+
 }
